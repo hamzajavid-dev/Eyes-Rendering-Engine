@@ -24,6 +24,7 @@ html, body {
 .hero {
   height: 175svh;
   background: #000;
+  cursor: none;
 }
 
 .stage {
@@ -39,7 +40,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: #000;
-  cursor: pointer;
+  cursor: none;
 }
 
 .animation-renderer {
