@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Little Eyes</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=9">
+</head>
+<body>
+  <main>
+    <section class="hero" aria-label="Animated eyes">
+      <div class="stage">
+        <div class="screen" title="Click to replay animation">
+          <div class="animation-renderer" data-width="400" data-height="400" data-anim-data="anim_data.bin" aria-label="Animated eyes"></div>
+          <div class="spin-wash" aria-hidden="true"></div>
+          <span class="animation-status" id="animation-status" role="status">loading eyes…</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="play">
+      <div class="panel">
+        <label class="row-label range-label" for="pupil-size">pupil size <output id="pupil-size-value" for="pupil-size">100%</output></label>
+        <input class="range" id="pupil-size" type="range" min="40" max="500" step="5" value="100">
+
+        <label class="row-label range-label" for="pupil-length">pupil length <output id="pupil-length-value" for="pupil-length">100%</output></label>
+        <input class="range" id="pupil-length" type="range" min="50" max="800" step="10" value="100">
+
+        <div class="color-controls">
+          <label class="color-control" for="eye-color">eye colour
+            <input id="eye-color" type="color" value="#f99f05">
+          </label>
+          <label class="color-control" for="pupil-color">pupil colour
+            <input id="pupil-color" type="color" value="#6e6123">
+          </label>
+        </div>
+
+        <button type="button" class="big-button" id="surprise">replay animation <kbd>r</kbd></button>
+      </div>
+    </section>
+  </main>
+
+  <script src="animation-assets.js?v=8"></script>
+  <script src="legacy-loader.js?v=8"></script>
+  <script src="anim.js?v=8"></script>
+  <script src="main.js?v=8"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+:root {
+  --bg: #f4f4f2;
+  --ink: #1d1d1f;
+  --muted: #9b9b9b;
+  --eye: #ffa400;
+  --eye2: #ffa400;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  text-transform: lowercase;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--eye); color: #000; }
+
+/* The first screen contains only the eyes. The sticky view stays visible
+   while scrolling through the extra space before the controls. */
+.hero {
+  height: 175svh;
+  background: #000;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+}
+
+.animation-renderer {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+  will-change: transform, filter;
+}
+
+.animation-renderer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scale(1.2);
+  transform-origin: center;
+}
+
+.spin-wash {
+  position: absolute;
+  inset: 0;
+  background-color: var(--spin-color, #ffa400);
+  background-image: radial-gradient(circle at 42% 30%, rgba(255, 255, 255, 0.3), transparent 55%);
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, background-color;
+}
+
+.animation-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--eye);
+  font-size: 15px;
+  text-align: center;
+  pointer-events: none;
+}
+.animation-status[hidden] { display: none; }
+
+.play { padding: 90px 20px 120px; }
+.panel {
+  max-width: 720px;
+  margin: 0 auto;
+  display: grid;
+  gap: 10px;
+}
+
+.row-label { font-size: 14px; margin-top: 14px; }
+.range-label { display: flex; justify-content: space-between; align-items: center; }
+.range-label output { color: var(--muted); font-variant-numeric: tabular-nums; }
+.range { width: 100%; margin: 0; height: 34px; appearance: none; background: transparent; cursor: pointer; }
+.range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 8px;
+  background: linear-gradient(to right, var(--eye) var(--range-progress), #d8d8d5 var(--range-progress));
+}
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -7px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+}
+.range::-moz-range-track { height: 8px; border-radius: 8px; background: #d8d8d5; }
+.range::-moz-range-progress { height: 8px; border-radius: 8px; background: var(--eye); }
+.range::-moz-range-thumb { width: 16px; height: 16px; border: 3px solid var(--ink); border-radius: 50%; background: #fff; }
+.range:focus-visible, .color-control input:focus-visible, .big-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.color-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.color-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 14px;
+  border: 1px solid #d8d8d5;
+  font-size: 14px;
+  cursor: pointer;
+}
+.color-control input { width: 42px; height: 36px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.color-control input::-webkit-color-swatch-wrapper { padding: 0; }
+.color-control input::-webkit-color-swatch { border: 1px solid rgba(0, 0, 0, 0.16); border-radius: 2px; }
+.color-control input::-moz-color-swatch { border: 1px solid rgba(0, 0, 0, 0.16); border-radius: 2px; }
+
+.big-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding: 16px;
+  border: 0;
+  background: #2a2b2c;
+  color: #f9f9f9;
+  font: inherit;
+  font-size: 18px;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.big-button:hover { transform: scale(0.98); opacity: 0.85; }
+.big-button:disabled { cursor: default; opacity: 0.45; }
+.big-button:disabled:hover { transform: none; }
+kbd {
+  margin-left: 8px;
+  padding: 1px 5px;
+  border: 1px solid currentColor;
+  font: inherit;
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+@media (max-width: 360px) {
+  .color-controls { grid-template-columns: 1fr; }
+}
