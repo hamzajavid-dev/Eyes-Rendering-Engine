@@ -54,9 +54,6 @@ html, body {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  transform: scale(1.2);
-  transform-origin: center;
 }
 
 .spin-wash {

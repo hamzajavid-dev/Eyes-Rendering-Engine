@@ -52,6 +52,8 @@
                 this.o = e || j,
                 this.canvas = null,
                 this.ctx = null,
+                this.resizeObserver = null,
+                this.onResize = () => this.resize(),
                 this.e = s,
                 this.t = !1,
                 this.l = !1,
@@ -70,13 +72,60 @@
             }
             h() {
                 this.canvas = document.createElement("canvas"),
-                this.canvas.width = this.s,
-                this.canvas.height = this.o,
                 this.canvas.style.display = "block",
                 this.canvas.style.opacity = "0",
                 this.canvas.style.transition = "opacity 600ms ease-in-out",
                 this.container.appendChild(this.canvas),
-                this.ctx = this.canvas.getContext("2d")
+                this.ctx = this.canvas.getContext("2d"),
+                this.canvas.style.width = "100%",
+                this.canvas.style.height = "100%",
+                this.resize(),
+                window.addEventListener("resize", this.onResize),
+                this.watchDensity();
+                if ("ResizeObserver" in window) {
+                    this.resizeObserver = new ResizeObserver(entries => {
+                        const entry = entries[entries.length - 1];
+                        const box = entry.devicePixelContentBoxSize && entry.devicePixelContentBoxSize[0];
+                        this.resize(box ? { width: box.inlineSize, height: box.blockSize } : null)
+                    });
+                    try {
+                        this.resizeObserver.observe(this.canvas, { box: "device-pixel-content-box" })
+                    } catch (_) {
+                        this.resizeObserver.observe(this.canvas)
+                    }
+                }
+            }
+            watchDensity() {
+                // Redraw at the new density after browser zoom or a move to another monitor.
+                if (!window.matchMedia) return;
+                this.densityQuery && this.densityQuery.removeEventListener("change", this.onDensityChange);
+                this.densityQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+                this.onDensityChange = () => { this.resize(); this.watchDensity() };
+                this.densityQuery.addEventListener("change", this.onDensityChange)
+            }
+            resize(devicePixels) {
+                if (!this.canvas) return;
+                const rect = this.canvas.getBoundingClientRect();
+                const width = rect.width || this.container.clientWidth || P;
+                const height = rect.height || this.container.clientHeight || j;
+                const density = window.devicePixelRatio || 1;
+                // Exact device pixels when the browser reports them, so the canvas maps 1:1 to the screen.
+                let pixelWidth = devicePixels ? devicePixels.width : Math.round(width * density);
+                let pixelHeight = devicePixels ? devicePixels.height : Math.round(height * density);
+                const limit = 40_000_000;
+                if (pixelWidth * pixelHeight > limit) {
+                    const shrink = Math.sqrt(limit / (pixelWidth * pixelHeight));
+                    pixelWidth = Math.round(pixelWidth * shrink);
+                    pixelHeight = Math.round(pixelHeight * shrink)
+                }
+                pixelWidth = Math.max(1, pixelWidth);
+                pixelHeight = Math.max(1, pixelHeight);
+                if (this.canvas.width !== pixelWidth || this.canvas.height !== pixelHeight) {
+                    this.canvas.width = pixelWidth;
+                    this.canvas.height = pixelHeight
+                }
+                this.s = pixelWidth;
+                this.o = pixelHeight
             }
             r(n) {
                 return !this.t || this.e < 0 || this.frozen ? 0 : o._w4(this.e, I(o, n), 1)
@@ -108,9 +157,10 @@
                     return;
                 let n = this.ctx
                   , l = Z(this.e);
+                const scale = Math.min(this.s, this.o) * 1.2 / w;
                 n.setTransform(1, 0, 0, 1, 0, 0),
                 n.clearRect(0, 0, this.s, this.o),
-                n.setTransform(this.s / w, 0, 0, this.o / w, 0, 0);
+                n.setTransform(scale, 0, 0, scale, (this.s - w * scale) / 2, (this.o - w * scale) / 2);
                 let e = null;
                 for (let s of l) {
                     n.fillStyle = s.blend === 2 ? this.appearance.pupilColor : this.appearance.eyeColor;
@@ -152,6 +202,9 @@
             _() {
                 this.a && clearTimeout(this.a),
                 this.i && clearTimeout(this.i),
+                window.removeEventListener("resize", this.onResize),
+                this.resizeObserver && this.resizeObserver.disconnect(),
+                this.densityQuery && this.densityQuery.removeEventListener("change", this.onDensityChange),
                 this.canvas && this.canvas.parentNode && this.canvas.parentNode.removeChild(this.canvas)
             }
         }
